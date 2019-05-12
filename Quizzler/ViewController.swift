@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     let questionBank = QuestionBank()
     var tapAnswer: Bool = false
     var currentQuestion: Int = 0
+    var score: Int = 0
     
     @IBOutlet weak var questionLabel: UILabel!
     @IBOutlet weak var scoreLabel: UILabel!
@@ -47,14 +48,29 @@ class ViewController: UIViewController {
         
         questionLabel.text = questionBank.questionArray[currentQuestion].questionText
         progressLabel.text = "\(currentQuestion + 1)/13"
-        
+        scoreLabel.text = "Score: \(score)"
+        progressBar.frame.size.width = (view.frame.size.width / 13) * CGFloat(currentQuestion + 1)
+    
     }
     
 
     func nextQuestion() {
         
-        currentQuestion+=1
-        
+        if currentQuestion == 12 {
+            
+            let alert = UIAlertController(title: "You have complete the Quiz!", message: "Do you want to complete it once again?", preferredStyle: .alert)
+            let alertRestarAction = UIAlertAction(title: "Restart", style: .default) { (UIAlertAction) in
+                self.startOver()
+            }
+            
+            alert.addAction(alertRestarAction)
+            
+            present(alert, animated: true, completion: nil)
+            
+        }
+        else{
+            currentQuestion+=1
+        }
     }
     
     
@@ -63,16 +79,21 @@ class ViewController: UIViewController {
         let correctAnswer = questionBank.questionArray[number].rightAnswer
         
         if correctAnswer == tapAnswer{
-            print("You are right")
+            ProgressHUD.showSuccess("Correct!")
+            score += 10
         }
         else{
-            print("Wrong!")
+            ProgressHUD.showError("Wrong!")
         }
         
     }
     
     
     func startOver() {
+        
+        currentQuestion = 0
+        score = 0
+        updateUI()
        
     }
     
